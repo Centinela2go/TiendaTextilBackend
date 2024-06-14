@@ -36,6 +36,7 @@ BASE_APPS = [
 
 LOCAL_APPS = [
     'apps.users',
+    
 ]
 
 THIRD_APPS = [

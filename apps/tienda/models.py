@@ -25,21 +25,21 @@ def validate_home_address(value):
         )
 
 # Create your models here.
-class CategoriaModel(Base):
-    Nombre = models.CharField('Nombre :', max_length=80)
-    Descripcion = models.CharField('Descripcion :', max_length= 200)
+class Categoria(Base):
+    nombre = models.CharField('Nombre :', max_length=80)
+    descripcion = models.CharField('Descripcion :', max_length= 200)
 
-class ProvedorModel(Base):
-    Nombre = models.CharField('Nombre :', max_length=80)
-    Direccion =models.CharField('Direccion :', max_length= 80,validators=[validate_home_address])
-    Telefono =models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
-    Email =models.EmailField('Email :', max_length= 20)
+class Provedor(Base):
+    nombre = models.CharField('Nombre :', max_length=80)
+    direccion =models.CharField('Direccion :', max_length= 80,validators=[validate_home_address])
+    telefono =models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
+    email =models.EmailField('Email :', max_length= 20)
     
-class ClienteModel(Base):
-    Nombre = models.CharField('Nombre :', max_length=80)
-    Direccion =models.CharField('Direccion :', max_length= 80,validators=[validate_home_address])
-    Telefono =models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
-    Email =models.EmailField('Email :', max_length= 20)
+class Cliente(Base):
+    nombre = models.CharField('Nombre :', max_length=80)
+    tireccion =models.CharField('Direccion :', max_length= 80,validators=[validate_home_address])
+    telefono =models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
+    email =models.EmailField('Email :', max_length= 20)
     
 
 
