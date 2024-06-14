@@ -1,0 +1,13 @@
+.idea
+*.pyc
+00*.py
+.jpg
+/node_modules
+.vscode
+.png
+.jpeg
+.cpython.pyc
+/__pycache__/
+/enviro
+.env/
+**/settings.py
