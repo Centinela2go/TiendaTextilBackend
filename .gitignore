@@ -11,3 +11,4 @@
 /enviro
 .env/
 **/settings.py
+*.sqlite3
