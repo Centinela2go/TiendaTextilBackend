@@ -1,7 +1,7 @@
 from django.urls import path
 
-from apps.tienda.api.views.general import CategoriaListAPIView
+from apps.tienda.api.views.general import CategoriaListAPIView, CategoriaCreateAPIView, CategoriaRetrieveAPIView, CategoriaDestroyAPIView
 
 urlpatterns = [
-    path('categoria/', CategoriaListAPIView.as_view(), name = 'categoria_list'),
+    
 ]
