@@ -7,8 +7,7 @@ from rest_framework.response import Response
 from apps.tienda.models import Categoria
 from apps.tienda.api.serialiers.general import CategoriaSerializer    
     
-class CategoriaViewSet(viewsets.GenericViewSet):
-    model = Categoria
+class CategoriaViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriaSerializer
 
     def get_queryset(self):
