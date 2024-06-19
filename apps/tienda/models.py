@@ -30,19 +30,25 @@ def validate_home_address(value):
 
 class Categoria(Base):
     nombre = models.CharField('Nombre :', max_length=80)
-    descripcion = models.CharField('Descripcion :', max_length= 200)
+    descripcion = models.CharField('Descripcion :', max_length= 255,null=True, blank=True)
+    def __str__(self):
+        return self.nombre
 
 class Proveedor(Base):
     nombre = models.CharField('Nombre :', max_length=80)
     direccion =models.CharField('Direccion :', max_length= 80,validators=[validate_home_address])
     telefono =models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
     email =models.EmailField('Email :', max_length= 20)
+    def __str__(self):
+        return self.nombre
     
 class Cliente(Base):
     nombre = models.CharField('Nombre :', max_length=80)
     direccion =models.CharField('Direccion :', max_length= 80,validators=[validate_home_address])
     telefono =models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
     email =models.EmailField('Email :', max_length= 20)
+    def __str__(self):
+        return self.nombre
     
 
 
