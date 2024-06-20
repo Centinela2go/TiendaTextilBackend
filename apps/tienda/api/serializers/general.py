@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.tienda.models import Categoria, Cliente, ProductoAlmacen, Proveedor
+from apps.tienda.models import Categoria, Cliente, ProductoAlmacen, Proveedor, Producto
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,4 +20,9 @@ class ClienteSerializer(serializers.ModelSerializer):
 class ProductoAlmacenSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductoAlmacen
+        exclude = ('fecha_registro', 'fecha_actualizacion', 'creado_por', 'actualizado_por')
+        
+class ProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producto
         exclude = ('fecha_registro', 'fecha_actualizacion', 'creado_por', 'actualizado_por')
