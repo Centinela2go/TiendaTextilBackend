@@ -3,3 +3,5 @@ djangorestframework==3.15.1
 django-crum==0.7.9
 pillow==10.3.0
 drf-yasg
+django-cors-headers
+djangorestframework-simplejwt
