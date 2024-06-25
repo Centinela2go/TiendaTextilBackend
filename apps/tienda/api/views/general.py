@@ -121,10 +121,10 @@ class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
 
     def get_queryset(self):
-        return self.get_serializer().Meta.model.objects.filter(estado = True)
+        return self.get_serializer().Meta.model.objects.filter()
 
     def get_object(self):
-        return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'], estado = True)
+        return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'])
 
     # @action(detail=False, methods=['get'])
     # def get_measure_units(self, request):
@@ -157,6 +157,7 @@ class ClienteViewSet(viewsets.ModelViewSet):
         return Response({'message':'', 'error':'Cliente no encontrado!'}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None):
+        
         if self.get_object().exists():
             serializer = self.serializer_class(instance=self.get_object().get(), data=request.data)       
             if serializer.is_valid():       
@@ -170,6 +171,13 @@ class ClienteViewSet(viewsets.ModelViewSet):
             return Response({'message':'Cliente eliminado correctamente!'}, status=status.HTTP_200_OK)       
         return Response({'message':'', 'error':'Cliente no encontrado!'}, status=status.HTTP_400_BAD_REQUEST)
     
+    def partial_update(self, request, *args, **kwargs):
+        if self.get_object().exists():
+            serializer = self.serializer_class(instance=self.get_object().get(), data=request.data, partial=True)       
+            if serializer.is_valid():       
+                serializer.save()       
+                return Response({'message':'Cliente actualizado correctamente!'}, status=status.HTTP_200_OK)       
+        return Response({'message':'', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST) 
     
 class ProductoAlmacenViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoAlmacenSerializer

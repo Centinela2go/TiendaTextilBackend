@@ -57,7 +57,7 @@ class Cliente(Base):
     nombre = models.CharField('Nombre :', max_length=80)
     direccion = models.CharField('Direccion :', max_length= 80,validators=[validate_home_address])
     telefono = models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
-    email = models.EmailField('Email :', max_length= 20)
+    email = models.EmailField('Email :', max_length= 256)
     
 
 
