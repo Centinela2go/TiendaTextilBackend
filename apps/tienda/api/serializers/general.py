@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from apps.tienda.models import Categoria, Cliente, ProductoAlmacen, Proveedor, Producto
+from apps.tienda.models import Categoria, Cliente, ProductoAlmacen, Proveedor, Producto, Empleado
+from apps.users.api.serializers import CustomUserSerializer
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,11 +19,20 @@ class ClienteSerializer(serializers.ModelSerializer):
         exclude = ('fecha_registro', 'fecha_actualizacion', 'creado_por', 'actualizado_por')
         
 class ProductoAlmacenSerializer(serializers.ModelSerializer):
+    categoria = CategoriaSerializer()
+    proveedor = ProveedorSerializer()
     class Meta:
         model = ProductoAlmacen
         exclude = ('fecha_registro', 'fecha_actualizacion', 'creado_por', 'actualizado_por')
         
 class ProductoSerializer(serializers.ModelSerializer):
+    producto_almacen = ProductoAlmacenSerializer()
     class Meta:
         model = Producto
+        exclude = ('fecha_registro', 'fecha_actualizacion', 'creado_por', 'actualizado_por')
+        
+class EmpleadoSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer()
+    class Meta:
+        model = Empleado
         exclude = ('fecha_registro', 'fecha_actualizacion', 'creado_por', 'actualizado_por')

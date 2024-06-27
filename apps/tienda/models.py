@@ -78,8 +78,8 @@ class Producto(Base):
     
 class Empleado(Base):
     nombre = models.CharField(max_length=255)
-    puesto = models.CharField(max_length=255)
-    telefono = models.CharField(max_length=20)
+    puesto = models.CharField(max_length=255) # crear nueva tabla para gestionar puestos o un choice
+    telefono = models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
     email = models.EmailField(max_length=255)
     fecha_contratacion = models.DateField()
     seguro_medico = models.BooleanField(default=False)
@@ -102,14 +102,8 @@ class Orden(Base):
     )
     total = models.DecimalField(max_digits=10, decimal_places=2)
 
-    def __str__(self):
-        return f'Orden {self.id} - {self.cliente.nombre}'
-    
 class DetalleOrden(Base):
     orden = models.ForeignKey(Orden, on_delete=models.PROTECT)
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return f"Detalle Orden {self.id} - Producto {self.producto_id} - Cantidad {self.cantidad}"
