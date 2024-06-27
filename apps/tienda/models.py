@@ -38,26 +38,26 @@ class Categoria(Base):
     """
     Modelo que representa una categoria de producto
     """
-    nombre = models.CharField('Nombre :', max_length=80)
-    descripcion = models.CharField('Descripcion :', max_length= 200)
+    nombre = models.CharField('Nombre :', max_length=80, unique=True)
+    descripcion = models.CharField('Descripcion :', max_length= 200, blank=True, null=True)
 
 class Proveedor(Base):
     """
     Modelo que representa un Proveedor
     """
-    nombre = models.CharField('Nombre :', max_length=80)
+    nombre = models.CharField('Nombre :', max_length=80, unique=True)
     direccion =models.CharField('Direccion :', max_length= 80,validators=[validate_home_address])
     telefono =models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
-    email =models.EmailField('Email :', max_length= 20)
+    email =models.EmailField('Email :', max_length= 20, blank=True, null=True)
     
 class Cliente(Base):
     """
     Modelo que representa un cliente
     """
-    nombre = models.CharField('Nombre :', max_length=80)
-    direccion = models.CharField('Direccion :', max_length= 80,validators=[validate_home_address])
-    telefono = models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number])
-    email = models.EmailField('Email :', max_length= 256)
+    nombre = models.CharField('Nombre :', max_length=80, unique=True)
+    direccion = models.CharField('Direccion :', max_length= 80,validators=[validate_home_address], blank=True, null=True)
+    telefono = models.CharField('Telefono :', max_length= 9,validators=[validate_phone_number], blank=True, null=True)
+    email = models.EmailField('Email :', max_length= 256, blank=True, null=True)
     
 
 

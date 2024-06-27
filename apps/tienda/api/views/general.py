@@ -77,16 +77,10 @@ class ProveedorViewSet(viewsets.ModelViewSet):
     serializer_class = ProveedorSerializer
 
     def get_queryset(self):
-        return self.get_serializer().Meta.model.objects.filter(estado = True)
+        return self.get_serializer().Meta.model.objects.filter()
 
     def get_object(self):
-        return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'], estado = True)
-
-    # @action(detail=False, methods=['get'])
-    # def get_measure_units(self, request):
-    #     data = Proveedor.objects.filter(estado = True)
-    #     data = ProveedorSerializer(data, many=True)
-    #     return Response(data.data)
+        return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'])
 
     def list(self, request):
         data = self.get_queryset()
@@ -126,6 +120,15 @@ class ProveedorViewSet(viewsets.ModelViewSet):
             return Response({'message':'Proveedor eliminado correctamente!'}, status=status.HTTP_200_OK)       
         return Response({'message':'', 'error':'Proveedor no encontrado!'}, status=status.HTTP_400_BAD_REQUEST)
     
+    def partial_update(self, request, *args, **kwargs):
+        if self.get_object().exists():
+            serializer = self.serializer_class(instance=self.get_object().get(), data=request.data, partial=True)       
+            if serializer.is_valid():       
+                serializer.save()       
+                return Response({'message':'Proveedor actualizado correctamente!'}, status=status.HTTP_200_OK)       
+        return Response({'message':'', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST) 
+    
+    
 class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
 
@@ -134,12 +137,6 @@ class ClienteViewSet(viewsets.ModelViewSet):
 
     def get_object(self):
         return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'])
-
-    # @action(detail=False, methods=['get'])
-    # def get_measure_units(self, request):
-    #     data = Cliente.objects.filter(estado = True)
-    #     data = ClienteSerializer(data, many=True)
-    #     return Response(data.data)
 
     def list(self, request):
         data = self.get_queryset()
@@ -192,10 +189,10 @@ class ProductoAlmacenViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoAlmacenSerializer
 
     def get_queryset(self):
-        return self.get_serializer().Meta.model.objects.filter(estado = True)
+        return self.get_serializer().Meta.model.objects.filter()
 
     def get_object(self):
-        return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'], estado = True)
+        return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'])
 
     def list(self, request):
         data = self.get_queryset()
@@ -234,6 +231,15 @@ class ProductoAlmacenViewSet(viewsets.ModelViewSet):
             self.get_object().get().delete()       
             return Response({'message':'Producto eliminado correctamente!'}, status=status.HTTP_200_OK)       
         return Response({'message':'', 'error':'Producto no encontrado!'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def partial_update(self, request, *args, **kwargs):
+        if self.get_object().exists():
+            serializer = self.serializer_class(instance=self.get_object().get(), data=request.data, partial=True)       
+            if serializer.is_valid():       
+                serializer.save()       
+                return Response({'message':'Proveedor actualizado correctamente!'}, status=status.HTTP_200_OK)       
+        return Response({'message':'', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST) 
+    
     
 class ProductoViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
