@@ -68,7 +68,7 @@ class ProductoAlmacen(Base):
     nombre = models.CharField('Nombre', max_length=255)
     costo = models.DecimalField('Costo', max_digits=10, decimal_places=2)
     existencias = models.IntegerField('Existencias', default=0)
-    descripcion = models.CharField('Descripción', max_length=255, null=True, blank=True, unique=True)
+    descripcion = models.CharField('Descripción', max_length=255, null=True, blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.PROTECT)
     

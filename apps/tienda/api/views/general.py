@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from apps.tienda.models import Categoria, Cliente, ProductoAlmacen, Proveedor
 from apps.tienda.api.serializers.general import (CategoriaSerializer, ClienteSerializer,
-    ProductoAlmacenSerializer, ProveedorSerializer, ProductoSerializer, EmpleadoSerializer)
+    ProductoAlmacenSerializer, ProductoAlmacenPostSerializer, ProveedorSerializer, ProductoSerializer, EmpleadoSerializer)
     
     
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -187,7 +187,8 @@ class ClienteViewSet(viewsets.ModelViewSet):
     
 class ProductoAlmacenViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoAlmacenSerializer
-
+    serializer_class_post = ProductoAlmacenPostSerializer
+    
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.filter()
 
@@ -205,7 +206,7 @@ class ProductoAlmacenViewSet(viewsets.ModelViewSet):
         return Response(data)
 
     def create(self, request):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class_post(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({'message':'Producto registrado correctamente!'}, status=status.HTTP_201_CREATED)
@@ -220,7 +221,7 @@ class ProductoAlmacenViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if self.get_object().exists():
-            serializer = self.serializer_class(instance=self.get_object().get(), data=request.data)       
+            serializer = self.serializer_class_post(instance=self.get_object().get(), data=request.data)       
             if serializer.is_valid():       
                 serializer.save()       
                 return Response({'message':'Producto actualizado correctamente!'}, status=status.HTTP_200_OK)       

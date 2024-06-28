@@ -25,6 +25,12 @@ class ProductoAlmacenSerializer(serializers.ModelSerializer):
         model = ProductoAlmacen
         exclude = ('fecha_registro', 'fecha_actualizacion', 'creado_por', 'actualizado_por')
         
+class ProductoAlmacenPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductoAlmacen
+        exclude = ('fecha_registro', 'fecha_actualizacion', 'creado_por', 'actualizado_por')
+     
+        
 class ProductoSerializer(serializers.ModelSerializer):
     producto_almacen = ProductoAlmacenSerializer()
     class Meta:
