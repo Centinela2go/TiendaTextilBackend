@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from apps.tienda.models import Categoria, Cliente, ProductoAlmacen, Proveedor
 from apps.tienda.api.serializers.general import (CategoriaSerializer, ClienteSerializer,
-    ProductoAlmacenSerializer, ProductoAlmacenPostSerializer, ProveedorSerializer, ProductoSerializer, EmpleadoSerializer)
+    ProductoAlmacenSerializer, ProductoAlmacenPostSerializer, ProveedorSerializer, ProductoSerializer, EmpleadoSerializer, ProductoPostSerializer)
     
     
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -238,25 +238,20 @@ class ProductoAlmacenViewSet(viewsets.ModelViewSet):
             serializer = self.serializer_class(instance=self.get_object().get(), data=request.data, partial=True)       
             if serializer.is_valid():       
                 serializer.save()       
-                return Response({'message':'Proveedor actualizado correctamente!'}, status=status.HTTP_200_OK)       
+                return Response({'message':'Producto actualizado correctamente!'}, status=status.HTTP_200_OK)       
         return Response({'message':'', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST) 
     
     
 class ProductoViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
+    serializer_class_post = ProductoPostSerializer
 
     def get_queryset(self):
-        return self.get_serializer().Meta.model.objects.filter(estado = True)
+        return self.get_serializer().Meta.model.objects.filter()
 
     def get_object(self):
-        return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'], estado = True)
-
-    # @action(detail=False, methods=['get'])
-    # def get_measure_units(self, request):
-    #     data = Cliente.objects.filter(estado = True)
-    #     data = ClienteSerializer(data, many=True)
-    #     return Response(data.data)
-
+        return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'])
+    
     def list(self, request):
         data = self.get_queryset()
         data = self.get_serializer(data, many=True)
@@ -268,7 +263,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
         return Response(data)
 
     def create(self, request):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class_post(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({'message':'Producto registrado correctamente!'}, status=status.HTTP_201_CREATED)
@@ -283,7 +278,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         if self.get_object().exists():
-            serializer = self.serializer_class(instance=self.get_object().get(), data=request.data)       
+            serializer = self.serializer_class_post(instance=self.get_object().get(), data=request.data)       
             if serializer.is_valid():       
                 serializer.save()       
                 return Response({'message':'Producto actualizado correctamente!'}, status=status.HTTP_200_OK)       
@@ -294,6 +289,14 @@ class ProductoViewSet(viewsets.ModelViewSet):
             self.get_object().get().delete()       
             return Response({'message':'Producto eliminado correctamente!'}, status=status.HTTP_200_OK)       
         return Response({'message':'', 'error':'Producto no encontrado!'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def partial_update(self, request, *args, **kwargs):
+        if self.get_object().exists():
+            serializer = self.serializer_class(instance=self.get_object().get(), data=request.data, partial=True)       
+            if serializer.is_valid():       
+                serializer.save()       
+                return Response({'message':'Producto actualizado correctamente!'}, status=status.HTTP_200_OK)       
+        return Response({'message':'', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST) 
     
     
 class EmpleadoViewSet(viewsets.ModelViewSet):
