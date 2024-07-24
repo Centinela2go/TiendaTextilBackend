@@ -1,4 +1,4 @@
-import django.contrib.auth.models
+from django.db import transaction
 from django.db.models import ProtectedError
 from django.db.utils import IntegrityError
 from rest_framework import generics, status
@@ -6,15 +6,17 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import DjangoModelPermissions
 
-from apps.tienda.models import Categoria, Cliente, ProductoAlmacen, Proveedor
-from apps.tienda.api.serializers.general import (CategoriaSerializer, ClienteSerializer,
-    ProductoAlmacenSerializer, ProductoAlmacenPostSerializer, ProveedorSerializer, ProductoSerializer, EmpleadoSerializer, ProductoPostSerializer)
+from apps.tienda.models import *
+from apps.tienda.api.serializers.general import *
+from apps.users.permissions import IsInDynamicGroup
     
     
 class CategoriaViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriaSerializer
+    permission_classes = [IsInDynamicGroup]
+    allowed_groups = ['administrador', 'empleado']
 
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.filter()
@@ -75,6 +77,8 @@ class CategoriaViewSet(viewsets.ModelViewSet):
        
 class ProveedorViewSet(viewsets.ModelViewSet):
     serializer_class = ProveedorSerializer
+    permission_classes = [IsInDynamicGroup]
+    allowed_groups = ['administrador', 'empleado']
 
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.filter()
@@ -131,6 +135,8 @@ class ProveedorViewSet(viewsets.ModelViewSet):
     
 class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
+    permission_classes = [IsInDynamicGroup]
+    allowed_groups = ['administrador', 'empleado']
 
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.filter()
@@ -188,7 +194,9 @@ class ClienteViewSet(viewsets.ModelViewSet):
 class ProductoAlmacenViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoAlmacenSerializer
     serializer_class_post = ProductoAlmacenPostSerializer
-    
+    permission_classes = [IsInDynamicGroup]
+    allowed_groups = ['administrador', 'empleado']
+
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.filter()
 
@@ -245,6 +253,8 @@ class ProductoAlmacenViewSet(viewsets.ModelViewSet):
 class ProductoViewSet(viewsets.ModelViewSet):
     serializer_class = ProductoSerializer
     serializer_class_post = ProductoPostSerializer
+    permission_classes = [IsInDynamicGroup]
+    allowed_groups = ['administrador', 'empleado'] 
 
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.filter()
@@ -301,18 +311,15 @@ class ProductoViewSet(viewsets.ModelViewSet):
     
 class EmpleadoViewSet(viewsets.ModelViewSet):
     serializer_class = EmpleadoSerializer
+    permission_classes = [IsInDynamicGroup]
+    allowed_groups = ['administrador']
+    
 
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.filter(estado = True)
 
     def get_object(self):
         return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'], estado = True)
-
-    # @action(detail=False, methods=['get'])
-    # def get_measure_units(self, request):
-    #     data = Cliente.objects.filter(estado = True)
-    #     data = ClienteSerializer(data, many=True)
-    #     return Response(data.data)
 
     def list(self, request):
         data = self.get_queryset()
@@ -351,3 +358,47 @@ class EmpleadoViewSet(viewsets.ModelViewSet):
             self.get_object().get().delete()       
             return Response({'message':'Empleado eliminado correctamente!'}, status=status.HTTP_200_OK)       
         return Response({'message':'', 'error':'Empleado no encontrado!'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class VentaViewSet(viewsets.ViewSet):
+    permission_classes = [IsInDynamicGroup]
+    allowed_groups = ['administrador', 'empleado']
+    permissions_extra = ['add_orden']
+    
+    def create(self, request):
+        with transaction.atomic():
+            # crear una orden (venta)
+            venta = {"empleado": request.user.id, "total": 0}
+            serializer_venta = OrdenSerializer(data=venta)
+            if not serializer_venta.is_valid():
+                raise Exception("Error: No se pudo realizar la venta")
+            venta_instance = serializer_venta.save()
+            
+            productos = request.data.get("productos", [])
+            
+            if (len(productos) <= 0):
+                raise Exception("Numero de productos invalidos")
+            total = 0
+            for producto in productos:    
+                prod_bd = ProductoAlmacen.objects.filter(producto__id=producto["id"]).first()
+                
+                if (not prod_bd):
+                    raise("Producto no existe")
+                
+                stock = prod_bd.existencias
+                if (stock - producto["cantidad"] < 0):
+                    raise Exception("Stock insuficiente ingrese otra cantidad")
+                prod_bd.existencias -= producto["cantidad"]
+                prod_bd.save()
+                
+                prod = Producto.objects.filter(pk=producto["id"]).first()
+                total += prod.precio * producto["cantidad"]
+                detalle = {"orden": venta_instance.pk, "producto": producto["id"], "cantidad": producto["cantidad"], "precio_unitario": prod.precio }
+                serializer_detalle = DetalleOrdenSerializer(data=detalle)
+                if (not serializer_detalle.is_valid()):
+                    raise Exception("Error al realizar venta")
+                serializer_detalle.save()
+            venta_instance.total = total
+            venta_instance.save()
+            print(request.data)
+        return Response({'message': 'Empleado registrado correctamente'}, status=status.HTTP_201_CREATED)
+        

@@ -87,19 +87,9 @@ class Empleado(Base):
 
     
 class Orden(Base):
-    class EstadoOrden(models.TextChoices):
-        PEDIDO = 'PEDIDO', _('Pedido')
-        ENTREGADO = 'ENTREGADO', _('Entregado')
-        CANCELADO = 'CANCELADO', _('Cancelado')
-
     cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT, blank=True, null=True)
-    fecha = models.DateTimeField()
+    fecha = models.DateTimeField(auto_now_add=True)
     empleado = models.ForeignKey(Empleado, on_delete=models.PROTECT)
-    estado_orden = models.CharField(
-        max_length=20,
-        choices=EstadoOrden.choices,
-        default=EstadoOrden.PEDIDO
-    )
     total = models.DecimalField(max_digits=10, decimal_places=2)
 
 class DetalleOrden(Base):

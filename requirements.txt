@@ -5,3 +5,4 @@ pillow==10.3.0
 drf-yasg
 django-cors-headers
 djangorestframework-simplejwt
+mysqlclient
