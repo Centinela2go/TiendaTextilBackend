@@ -11,6 +11,9 @@ from rest_framework.permissions import DjangoModelPermissions
 from apps.tienda.models import *
 from apps.tienda.api.serializers.general import *
 from apps.users.permissions import IsInDynamicGroup
+
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
     
     
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -24,6 +27,11 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     def get_object(self):
         return self.get_serializer().Meta.model.objects.filter(id=self.kwargs['pk'])
 
+    @swagger_auto_schema(
+        operation_description="Get a list of items",
+        responses={200: openapi.Response('Success', CategoriaSerializer)},
+        security=[{'Bearer': []}]
+    )
     def list(self, request):
         data = self.get_queryset()
         data = self.get_serializer(data, many=True)

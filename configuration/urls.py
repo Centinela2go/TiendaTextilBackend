@@ -20,18 +20,18 @@ from django.urls import re_path
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
-from apps.users.views import Login,Logout
+from apps.users.views import Login, Logout
 
 schema_view = get_schema_view(
    openapi.Info(
       title="Documentación de Api Tienda Textil",
-      default_version='v0.1',
+      default_version='v0.2',
       description="Api tienda textil",
       terms_of_service="https://www.google.com/policies/terms/",
       contact=openapi.Contact(email="contact@snippets.local"),
@@ -39,6 +39,7 @@ schema_view = get_schema_view(
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
+   authentication_classes=(JWTAuthentication,),
 )
 
 urlpatterns = [
