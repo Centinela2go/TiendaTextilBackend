@@ -7,10 +7,10 @@ ALLOWED_HOSTS = []
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tiendatextil',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost', 
+        'NAME': 'orlando$default',
+        'USER': 'orlando',
+        'PASSWORD': 'OrlandoCana123$',
+        'HOST': 'orlando.mysql.pythonanywhere-services.com', 
         'PORT': '3306',   
     }
 }
